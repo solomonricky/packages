@@ -12,7 +12,7 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/Mellanox/mstflint
-PKG_MIRROR_HASH:=d801b839335d6513bf5bb6d5013506366706e5ea20d9eac1a5dd6501f729437d
+PKG_MIRROR_HASH:=4dca9f50bd20b16e58d10c58455b628e55c0158452e111fd3a64d98cab46ed1b
 PKG_SOURCE_VERSION:=17e9b849ba57cfac1b28240a25ece300a0f74a45
 PKG_SOURCE_DATE:=2024-01-15
 
@@ -31,7 +31,7 @@ define Package/mstflint
   CATEGORY:=Utilities
   TITLE:=Mellanox Firmware Burning and Diagnostics Tools
   URL:=https://github.com/Mellanox/mstflint
-  DEPENDS:=@!(mips||mipsel) \
+  DEPENDS:=@!(mips||mips64||mipsel) \
     +libcurl +liblzma +libopenssl +libsqlite3 \
     +libstdcpp +libxml2 +python3-ctypes \
     +python3-urllib +python3-xml +zlib
