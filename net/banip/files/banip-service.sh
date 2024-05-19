@@ -37,21 +37,17 @@ if [ "${ban_action}" != "reload" ]; then
 			sleep 1
 		done
 		if ! /etc/init.d/firewall status >/dev/null 2>&1; then
-			f_log "err" "error in nft based firewall/fw4"
+			f_log "err" "nftables based firewall error"
 		fi
 	else
-		f_log "err" "no nft based firewall/fw4"
+		f_log "err" "nftables based firewall not found"
 	fi
 fi
 
 # init banIP nftables namespace
 #
-if [ "${ban_action}" != "reload" ] || ! "${ban_nftcmd}" -t list set inet banIP allowlistv4MAC >/dev/null 2>&1; then
-	if f_nftinit "${ban_tmpfile}".init.nft; then
-		f_log "info" "initialize banIP nftables namespace"
-	else
-		f_log "err" "can't initialize banIP nftables namespace"
-	fi
+if [ "${ban_action}" != "reload" ] || ! "${ban_nftcmd}" list chain inet banIP pre-routing >/dev/null 2>&1; then
+	f_nftinit "${ban_tmpfile}".init.nft
 fi
 
 # handle downloads
@@ -150,14 +146,14 @@ wait
 
 # end processing
 #
-if [ "${ban_mailnotification}" = "1" ] && [ -n "${ban_mailreceiver}" ] && [ -x "${ban_mailcmd}" ]; then
-	(
-		sleep 5
+(
+	sleep 5
+	if [ "${ban_mailnotification}" = "1" ] && [ -n "${ban_mailreceiver}" ] && [ -x "${ban_mailcmd}" ]; then
 		f_mail
-	) &
-fi
-json_cleanup
-rm -rf "${ban_lock}"
+	fi
+	json_cleanup
+	rm -rf "${ban_lock}"
+) &
 
 # start detached log service (infinite loop)
 #
